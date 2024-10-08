@@ -1,4 +1,4 @@
-import { Button, FormLabel, Grid, TextField } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import React, { useState } from "react";
 import { createStudent } from "../api/student-api";
 import { useNavigate } from "react-router-dom";
@@ -54,14 +54,14 @@ export default function CreatePage() {
     if (student.image === "") {
       tempError.image = "image is required";
     } else {
-      if (isValidUrl(student.image) == false) {
+      if (isValidUrl(student.image) === false) {
         tempError.image = "url should be valid";
       }
     }
 
     setErrors(tempError);
 
-    return Object.values(tempError).every((x) => x == "");
+    return Object.values(tempError).every((x) => x === "");
   };
 
   const handleSubmit = (e) => {
