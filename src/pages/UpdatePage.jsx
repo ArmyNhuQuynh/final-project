@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function UpdatePage() {
   const [student, setStudent] = useState({
     name: "",
-    dateofbirth: new Date(),
+    dateofbirth:"",
     gender: true,
     class: "",
     image: "",
@@ -25,7 +25,9 @@ export default function UpdatePage() {
     getStudentById(id).then((data) => {
       console.log(data);
       if (data) {
-        setStudent(data);
+        setStudent({...data,
+          dateofbirth:formatForInput(data.dateofbirth),
+      });
       }
     });
   }, []);
@@ -41,9 +43,24 @@ export default function UpdatePage() {
       return false;
     }
   }
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
+  const formatForInput = (dateString) => {
+    if (!dateString) return ""; 
+  
+    if (dateString.includes("/")) {
+      const [day, month, year] = dateString.split("/");
+      if (day && month && year) { 
+        return `${year}-${month}-${day}`;
+      }
+    }
+  
+    if (dateString.includes("-")) {
+      const [year, month, day] = dateString.split("-");
+      if (year && month && day) { 
+        return `${day}/${month}/${year}`; 
+      }
+    }
+  
+    return ""; 
   };
   const validate = () => {
     let tempError = {};
@@ -79,8 +96,12 @@ export default function UpdatePage() {
     console.log(student);
 
     if (!validate()) return;
-
-    updateStudent(id, student).then(() => {
+    
+    const studentToUpdate = {
+      ...student,
+      dateofbirth: formatForInput(student.dateofbirth),
+    };
+    updateStudent(id, studentToUpdate).then(() => {
       alert("update success");
       navigate("/dashboard");
     });
@@ -116,7 +137,7 @@ export default function UpdatePage() {
               onChange={(e) =>
                 setStudent({
                   ...student,
-                  dateofbirth: formatDate(e.target.value),
+                  dateofbirth: e.target.value,
                 })
               }
             />

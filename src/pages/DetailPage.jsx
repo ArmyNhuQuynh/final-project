@@ -5,23 +5,20 @@ import { getStudentById } from "../api/student-api";
 import { Typography } from "@mui/material";
 
 export default function DetailPage() {
-    const{ id } = useParams();
+  const { id } = useParams();
 
-    const [student, setStudent] = useState(null);
-    useEffect(() => {
-        getStudentById(id)
-        .then((data) => {
-            if(data) setStudent(data)
-        })
-    }, [])
-    console.log(student)
+  const [student, setStudent] = useState(null);
+  useEffect(() => {
+    getStudentById(id).then((data) => {
+      if (data) setStudent(data);
+    });
+  }, []);
+  console.log(student);
   return (
-  <div>
-    <StudentCard student={student} />
-    Feedback:
-    <Typography variant="body">
-        {student?.feedback}
-    </Typography>
-  </div>
-)
+    <div>
+      <StudentCard student={student} />
+      Feedback : 
+      <Typography variant="body">{student?.feedback}</Typography>
+    </div>
+  );
 }

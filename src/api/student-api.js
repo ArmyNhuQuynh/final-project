@@ -31,6 +31,9 @@ export const createStudent = async (student) => {
 
 export const updateStudent = async (id, student) => {
     try{
+        console.log(student);
+        student.class = student.feedback;
+        
         const response = await axios.put(`${apiUrl}/${id}`, student)
         return response.data;
     }catch(e){

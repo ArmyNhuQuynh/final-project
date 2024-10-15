@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { getAllStudents } from "../api/student-api";
 import StudentCard from "../components/StudentCard";
-import { Grid } from "@mui/material";
-
+import { Button, Grid } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 export default function HomePage() {
   const [students, setStudents] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     getAllStudents().then((data) => {
       if (data) {
@@ -26,6 +26,12 @@ export default function HomePage() {
         {students.map((student) => (
           <Grid item xs={4} key={student.id}>
             <StudentCard student={student} />
+            <Button
+                size="small"
+                onClick={() => navigate("detail/" + student?.id)}
+              >
+                 View Detail
+              </Button>
           </Grid>
         ))}
       </Grid>

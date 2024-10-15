@@ -31,9 +31,24 @@ export default function CreatePage() {
       return false;
     }
   }
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
+  const formatForInput = (dateString) => {
+    if (!dateString) return "";
+
+    if (dateString.includes("/")) {
+      const [day, month, year] = dateString.split("/");
+      if (day && month && year) {
+        return `${year}-${month}-${day}`;
+      }
+    }
+
+    if (dateString.includes("-")) {
+      const [year, month, day] = dateString.split("-");
+      if (year && month && day) {
+        return `${day}/${month}/${year}`;
+      }
+    }
+
+    return "";
   };
   const validate = () => {
     let tempError = {};
@@ -69,8 +84,11 @@ export default function CreatePage() {
     console.log(student);
 
     if (!validate()) return;
-
-    createStudent(student).then(() => {
+    const studentToCreate = {
+      ...student,
+      dateofbirth: formatForInput(student.dateofbirth),
+    };
+    createStudent(studentToCreate).then(() => {
       alert("create success");
       navigate("/dashboard");
     });
@@ -85,7 +103,7 @@ export default function CreatePage() {
             <input
               label="Name"
               type="text"
-              placeholder="Name"
+              placeholder=""
               value={student.name}
               onChange={(e) =>
                 setStudent({
@@ -106,7 +124,7 @@ export default function CreatePage() {
               onChange={(e) =>
                 setStudent({
                   ...student,
-                  dateofbirth: formatDate(e.target.value),
+                  dateofbirth: e.target.value,
                 })
               }
             />

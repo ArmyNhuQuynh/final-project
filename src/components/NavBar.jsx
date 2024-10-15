@@ -10,7 +10,7 @@ export default function NavBar() {
     <header>
       <Box>
          <Button onClick={() => navigate('/')} variant="contained">Home</Button>
-         <Button onClick={() => navigate('/dashboard')} variant="contained">Dashboar</Button>
+         <Button onClick={() => navigate('/dashboard')} variant="contained">Dashboard</Button>
          <Button onClick={() => navigate('/contact')} variant="contained">Contact</Button>
 
       </Box>
