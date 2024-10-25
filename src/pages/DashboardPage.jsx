@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { deleteStudent, getAllStudents } from '../api/student-api';
-import { Avatar, Button } from '@mui/material';
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -44,6 +44,16 @@ export default function DashboardPage() {
             () => getAPI()
         )
     }
+
+    const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <div>
         <Button onClick={() => navigate("/dashboard/create") } variant ='contained'>Create</Button>
@@ -76,8 +86,22 @@ export default function DashboardPage() {
               <TableCell align="right">{row.class}</TableCell>
               <TableCell align="right">
               <Button size="small" onClick={() => navigate("update/"+row?.id)}>Update</Button>
-              <Button size="small" onClick={() => handleDelete(row?.id)}>Delete</Button>
-
+              <React.Fragment>
+              <Button variant="outlined" onClick={handleClickOpen}>DELETE</Button>
+              <Dialog open={open} onClose={handleClose} aria-describedby="alert-dialog-description">
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                    Are you sure you want to delete this student?
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Disagree</Button>
+                  <Button 
+                  onClick={() => {handleDelete(row?.id); // Xóa hàng
+                                   handleClose(); }}> Agree </Button>
+                </DialogActions>
+                </Dialog>
+              </React.Fragment>
               </TableCell>
             </TableRow>
           ))}
