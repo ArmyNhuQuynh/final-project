@@ -7,8 +7,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { deleteStudent, getAllStudents } from '../api/student-api';
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText } from '@mui/material';
+import { Alert, Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -16,43 +17,48 @@ import { useNavigate } from 'react-router-dom';
 export default function DashboardPage() {
     const [students, setStudents] = React.useState([])
     const navigate = useNavigate()
+    const [deleteStudentId, setDeleteStudentId] = React.useState(null);
+    const [successAlert, setSuccessAlert] = React.useState(false);
 
     const getAPI = () => {
         getAllStudents()
         .then(
-            data => {
+            (data) => {
                 if(data){
                     // sort student
                     data.sort((a, b) => {
                         if(a.name < b.name) return -1;
                         if(a.name > b.name) return 1;
                         return 0;
-                    })
-                    setStudents(data)
+                    });
+                    setStudents(data);
                 }
             }
-            )
-    }
+            );
+    };
 
     React.useEffect(() => {
         getAPI();
     }, [])
 
-    const handleDelete = (id) => {
-        deleteStudent(id)
-        .then(
-            () => getAPI()
-        )
-    }
+    const handleDelete = () => {
+        deleteStudent(deleteStudentId)
+        .then(() => {getAPI();
+            setSuccessAlert(true);
+            setDeleteStudentId(null);
+    });
+    };
+    const handleCloseAlert = () => {
+      setSuccessAlert(false);
+    };
+    
 
-    const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpen = (id) => {
+    setDeleteStudentId(id);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setDeleteStudentId(null);
   };
   return (
     <div>
@@ -86,28 +92,31 @@ export default function DashboardPage() {
               <TableCell align="right">{row.class}</TableCell>
               <TableCell align="right">
               <Button size="small" onClick={() => navigate("update/"+row?.id)}>Update</Button>
-              <React.Fragment>
-              <Button variant="outlined" onClick={handleClickOpen}>DELETE</Button>
-              <Dialog open={open} onClose={handleClose} aria-describedby="alert-dialog-description">
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    Are you sure you want to delete this student?
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>Disagree</Button>
-                  <Button 
-                  onClick={() => {handleDelete(row?.id); // Xóa hàng
-                                   handleClose(); }}> Agree </Button>
-                </DialogActions>
-                </Dialog>
-              </React.Fragment>
+              <Button variant="outlined" onClick={() => handleClickOpen(row.id)}>DELETE</Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+
+    <Dialog open={Boolean(deleteStudentId)} onClose={handleClose} aria-describedby="alert-dialog-description">
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this student?
+        </DialogContentText>
+      </DialogContent>
+     <DialogActions>
+        <Button onClick={handleClose}>Disagree</Button>
+        <Button onClick={handleDelete}>Agree</Button>
+     </DialogActions>
+    </Dialog>
+
+    <Snackbar open={successAlert} autoHideDuration={3000} onClose={handleCloseAlert}>
+                <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
+                    Student deleted successfully!
+                </Alert>
+            </Snackbar>
     </div>
   )
 }
